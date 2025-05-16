@@ -5,11 +5,11 @@ from torchvision import models
 # Ensure directories exist
 os.makedirs("models", exist_ok=True)
 
-# Use Safe Loading for Full Quantized Model
+# Load the Quantized Model (Full Model, Safe Load)
 with torch.serialization.safe_globals([models.resnet.ResNet]):
     quantized_model = torch.load("models/resnet18_pruned_quantized_full.pth", weights_only=False)
 
-# Confirm the model is in evaluation mode
+# Ensure Model is in Evaluation Mode
 quantized_model.eval()
 
 # Export the Quantized Model to ONNX
