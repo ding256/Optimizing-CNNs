@@ -11,14 +11,12 @@ transform = transforms.Compose([transforms.ToTensor()])
 testset = datasets.CIFAR10(root='./data', train=False, download=True, transform=transform)
 testloader = torch.utils.data.DataLoader(testset, batch_size=128, shuffle=False)
 
-# Load the Quantized Model (State Dict Only)
-model = models.resnet18()
-model.fc = torch.nn.Linear(model.fc.in_features, 10)
-model.eval()
+# Load the Full Quantized Model Directly (No State Dict)
+with torch.serialization.safe_globals([models.resnet.ResNet]):
+    model = torch.load("models/resnet18_pruned_quantized_full.pth", weights_only=False)
 
-# Load the Quantized State Dict (No Corruption)
-state_dict = torch.load("models/resnet18_pruned_quantized_state.pth")
-model.load_state_dict(state_dict)
+# Ensure Model is in Evaluation Mode
+model.eval()
 
 # Evaluate Accuracy
 correct, total = 0, 0
