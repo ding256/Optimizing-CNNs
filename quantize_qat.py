@@ -24,6 +24,6 @@ for _ in range(2):
 # Convert to Fully Quantized Model
 quantized_model = quantization.convert(model.eval(), inplace=False)
 
-# Save Quantized Model (State Dict Only)
-torch.save(quantized_model.state_dict(), "models/resnet18_pruned_quantized_state.pth")
-print("Quantized model saved to models/resnet18_pruned_quantized_state.pth")
+# Save Full Quantized Model (Complete Model)
+torch.save(quantized_model, "models/resnet18_pruned_quantized_full.pth")
+print("Quantized model saved to models/resnet18_pruned_quantized_full.pth")
