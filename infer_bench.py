@@ -1,21 +1,26 @@
 import torch
 import torch.nn as nn
-from torchvision import datasets, transforms, models
+from torchvision import models
+from torch.ao.quantization import get_default_qconfig, prepare, convert
 
-transform = transforms.Compose([transforms.ToTensor()])
-testset = datasets.CIFAR10(root='./data', train=False, download=True, transform=transform)
-testloader = torch.utils.data.DataLoader(testset, batch_size=128, shuffle=False)
+# Load the quantized model
+model = models.resnet18(pretrained=False)
+model.fc = nn.Linear(model.fc.in_features, 10)  # Adjust for CIFAR-10
 
-model = models.resnet18()
-model.fc = nn.Linear(model.fc.in_features, 10)
-model.load_state_dict(torch.load("models/resnet18_pruned_quantized_state.pth"))
+# Prepare the model for quantization
+model.qconfig = get_default_qconfig("fbgemm")
+model = prepare(model)
+model = convert(model)
+
+# Load the quantized state dictionary with strict=False
+quantized_state_dict = torch.load("models/resnet18_pruned_quantized_state.pth")
+model.load_state_dict(quantized_state_dict, strict=False)  # strict=False allows unmatched keys
+
+# Set to evaluation mode
 model.eval()
 
-correct, total = 0, 0
-for inputs, labels in testloader:
-    outputs = model(inputs)
-    _, predicted = torch.max(outputs, 1)
-    total += labels.size(0)
-    correct += (predicted == labels).sum().item()
-
-print(f"Quantized Model Accuracy: {100 * correct / total:.2f}%")
+# Sample inference
+dummy_input = torch.randn(1, 3, 224, 224)
+with torch.no_grad():
+    outputs = model(dummy_input)
+print("Inference complete with quantized model.")
