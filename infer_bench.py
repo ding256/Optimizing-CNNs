@@ -11,8 +11,8 @@ transform = transforms.Compose([transforms.ToTensor()])
 testset = datasets.CIFAR10(root='./data', train=False, download=True, transform=transform)
 testloader = torch.utils.data.DataLoader(testset, batch_size=128, shuffle=False)
 
-# Load Full Quantized Model
-model = torch.load("models/resnet18_pruned_quantized_full.pth")
+# Load Full Quantized Model (weights_only=False)
+model = torch.load("models/resnet18_pruned_quantized_full.pth", weights_only=False)
 model.eval()
 
 # Evaluate Accuracy
