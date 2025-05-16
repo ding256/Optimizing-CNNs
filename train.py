@@ -16,17 +16,12 @@ transform = transforms.Compose([
     transforms.ToTensor(),
     transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))
 ])
-
 trainset = datasets.CIFAR10(root='./data', train=True, download=True, transform=transform)
 trainloader = torch.utils.data.DataLoader(trainset, batch_size=128, shuffle=True)
 
-testset = datasets.CIFAR10(root='./data', train=False, download=True, transform=transform)
-testloader = torch.utils.data.DataLoader(testset, batch_size=128, shuffle=False)
-
 # Initialize ResNet-18 Model
 model = models.resnet18()
-num_classes = 10
-model.fc = nn.Linear(model.fc.in_features, num_classes)
+model.fc = nn.Linear(model.fc.in_features, 10)
 model = model.to(device)
 
 # Training Setup
@@ -49,6 +44,6 @@ for epoch in range(epochs):
 
     print(f"Epoch [{epoch+1}/{epochs}], Loss: {running_loss/len(trainloader):.4f}")
 
-# Saving the Baseline Model
+# Save the Baseline Model
 torch.save(model.state_dict(), "models/resnet18_baseline.pth")
 print("Baseline model saved to models/resnet18_baseline.pth")
