@@ -1,21 +1,15 @@
-import os
 import torch
 from torchvision import datasets, transforms, models
 
-# Ensure directories exist
-os.makedirs("data", exist_ok=True)
-os.makedirs("models", exist_ok=True)
-
-# Load CIFAR-10 Dataset (for testing)
 transform = transforms.Compose([transforms.ToTensor()])
 testset = datasets.CIFAR10(root='./data', train=False, download=True, transform=transform)
 testloader = torch.utils.data.DataLoader(testset, batch_size=128, shuffle=False)
 
-# Load the Fully Quantized Model (Full Structure)
-with torch.serialization.safe_globals([models.resnet.ResNet]):
-    model = torch.load("models/resnet18_pruned_quantized_full.pth", weights_only=False)
+model = models.resnet18()
+model.fc = nn.Linear(model.fc.in_features, 10)
+model.load_state_dict(torch.load("models/resnet18_pruned_quantized_state.pth"))
+model.eval()
 
-# Directly use the model without .eval()
 correct, total = 0, 0
 for inputs, labels in testloader:
     outputs = model(inputs)
