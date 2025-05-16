@@ -11,10 +11,11 @@ transform = transforms.Compose([transforms.ToTensor()])
 testset = datasets.CIFAR10(root='./data', train=False, download=True, transform=transform)
 testloader = torch.utils.data.DataLoader(testset, batch_size=128, shuffle=False)
 
-# Use Safe Loading (PyTorch 2.6+)
+# Use Safe Loading for Full Quantized Model
 with torch.serialization.safe_globals([models.resnet.ResNet]):
     model = torch.load("models/resnet18_pruned_quantized_full.pth", weights_only=False)
-    
+
+# Confirm the model is in evaluation mode
 model.eval()
 
 # Evaluate Accuracy
