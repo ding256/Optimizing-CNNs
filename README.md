@@ -35,8 +35,8 @@ This project demonstrates how to optimize Convolutional Neural Networks (CNNs) u
 Result is inference_benchmark_results.txt
 
 ## Docker setup
-# Build the Docker image
+1. Build the Docker image
 docker build -t optimizing-cnns .
 
-# Run the Docker container (GPU support)
+2. Run the Docker container (GPU support)
 docker run --gpus all -it optimizing-cnns
