@@ -77,6 +77,6 @@ def evaluate(model, testloader):
 accuracy = evaluate(pruned_model, testloader)
 
 # Saving the pruned model
-pruned_model_path = "resnet18_pruned.pth"
+pruned_model_path = "models/resnet18_pruned.pth"
 torch.save(pruned_model.state_dict(), pruned_model_path)
 print(f"Pruned model saved as {pruned_model_path}")
