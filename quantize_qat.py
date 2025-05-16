@@ -12,4 +12,4 @@ model.qconfig = quantization.get_default_qat_qconfig("fbgemm")
 model_prepared = quantization.prepare_qat(model, inplace=False)
 
 quantized_model = quantization.convert(model_prepared, inplace=False)
-torch.save(quantized_model.state_dict(), "models/resnet18_pruned_quantized_state.pth")
+torch.save(quantized_model.state_dict(), "models/resnet18_pruned_quantized_full.pth")
