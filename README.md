@@ -13,7 +13,7 @@ This project demonstrates how to optimize Convolutional Neural Networks (CNNs) u
 ## Setup and Installation
 1. Clone the repository:
    ```bash
-   git clone <your-github-repo-url>
+   git clone <my-github-repo-url>
    cd Optimizing-CNNs
 2. Install required Python packages:
    pip install torch torchvision onnx onnxruntime numpy
