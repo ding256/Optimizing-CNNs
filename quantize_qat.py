@@ -24,7 +24,7 @@ for _ in range(2):
     pass  # Simulation for fast QAT
 
 # Convert to Fully Quantized Model (Preserve Structure)
-quantized_model = quantization.convert(model_prepared.eval(), inplace=False)
+quantized_model = quantization.convert(model_prepared, inplace=False)
 
 # Save Full Quantized Model (Including Structure)
 torch.save(quantized_model, "models/resnet18_pruned_quantized_full.pth")
