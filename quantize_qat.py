@@ -23,9 +23,9 @@ model_prepared = quantization.prepare_qat(model, inplace=False)
 for _ in range(2):
     pass  # Simulation for fast QAT
 
-# Convert to Fully Quantized Model (Clean Conversion)
+# Convert to Fully Quantized Model (Preserve Structure)
 quantized_model = quantization.convert(model_prepared.eval(), inplace=False)
 
-# Save the Quantized Model (State Dict Only - No Corruption)
-torch.save(quantized_model.state_dict(), "models/resnet18_pruned_quantized_state.pth")
-print("Quantized model (state dict) saved to models/resnet18_pruned_quantized_state.pth")
+# Save Full Quantized Model (Including Structure)
+torch.save(quantized_model, "models/resnet18_pruned_quantized_full.pth")
+print("Quantized model (full) saved to models/resnet18_pruned_quantized_full.pth")
