@@ -4,8 +4,8 @@ import torch
 # Ensure directories exist
 os.makedirs("models", exist_ok=True)
 
-# Load the Full Quantized Model
-quantized_model = torch.load("models/resnet18_pruned_quantized_full.pth")
+# Load the Full Quantized Model (weights_only=False)
+quantized_model = torch.load("models/resnet18_pruned_quantized_full.pth", weights_only=False)
 quantized_model.eval()
 
 # Export to ONNX
