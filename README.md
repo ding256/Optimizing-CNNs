@@ -27,7 +27,7 @@ This project demonstrates how to optimize Convolutional Neural Networks (CNNs) u
 2. Prune (30%):
    python prune.py
 3. Apply Quantization:
-   python quantize.py
+   python quantize_qat.py
 4. Export model to ONNX:
    python export_onnx.py
 5. Inference and Benchmarking:
