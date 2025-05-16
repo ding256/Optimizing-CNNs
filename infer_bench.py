@@ -15,10 +15,7 @@ testloader = torch.utils.data.DataLoader(testset, batch_size=128, shuffle=False)
 with torch.serialization.safe_globals([models.resnet.ResNet]):
     model = torch.load("models/resnet18_pruned_quantized_full.pth", weights_only=False)
 
-# Ensure Model is in Evaluation Mode
-model.eval()
-
-# Evaluate Accuracy
+# Directly Use the Quantized Model Without `.eval()`
 correct, total = 0, 0
 for inputs, labels in testloader:
     outputs = model(inputs)
