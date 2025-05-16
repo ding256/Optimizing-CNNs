@@ -1,52 +1,54 @@
+import os
 import torch
 import torch.nn as nn
 import torch.optim as optim
-from torch.optim.lr_scheduler import OneCycleLR
-import torchvision
-import torchvision.transforms as transforms
+from torchvision import datasets, transforms, models
 
-# Device configuration
-device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+# Ensure directories exist
+os.makedirs("data", exist_ok=True)
+os.makedirs("models", exist_ok=True)
 
-# CIFAR-10 dataset
+# Set device (GPU if available)
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
+# Load CIFAR-10 Dataset
 transform = transforms.Compose([
-    transforms.RandomCrop(32, padding=4),
-    transforms.RandomHorizontalFlip(),
     transforms.ToTensor(),
-    transforms.Normalize((0.4914, 0.4822, 0.4465), (0.2023, 0.1994, 0.2010)),
+    transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))
 ])
 
-train_dataset = torchvision.datasets.CIFAR10(root='./data', train=True, transform=transform, download=True)
-train_loader = torch.utils.data.DataLoader(dataset=train_dataset, batch_size=128, shuffle=True, num_workers=4)
+trainset = datasets.CIFAR10(root='./data', train=True, download=True, transform=transform)
+trainloader = torch.utils.data.DataLoader(trainset, batch_size=128, shuffle=True)
 
-test_dataset = torchvision.datasets.CIFAR10(root='./data', train=False, transform=transform)
-test_loader = torch.utils.data.DataLoader(dataset=test_dataset, batch_size=128, shuffle=False, num_workers=4)
+testset = datasets.CIFAR10(root='./data', train=False, download=True, transform=transform)
+testloader = torch.utils.data.DataLoader(testset, batch_size=128, shuffle=False)
 
-# Defining ResNet-18 model
-model = torchvision.models.resnet18(pretrained=False, num_classes=10).to(device)
+# Initialize ResNet-18 Model
+model = models.resnet18()
+num_classes = 10
+model.fc = nn.Linear(model.fc.in_features, num_classes)
+model = model.to(device)
 
-# Loss and optimizer
+# Training Setup
 criterion = nn.CrossEntropyLoss()
-optimizer = optim.SGD(model.parameters(), lr=0.01, momentum=0.9, weight_decay=5e-4)
-scheduler = OneCycleLR(optimizer, max_lr=0.1, steps_per_epoch=len(train_loader), epochs=5)
+optimizer = optim.Adam(model.parameters(), lr=0.001)
+epochs = 5
 
-# Training function
-def train_model():
-    model.train()
-    for epoch in range(5):
-        total_loss = 0
-        for images, labels in train_loader:
-            images, labels = images.to(device), labels.to(device)
-            optimizer.zero_grad()
-            outputs = model(images)
-            loss = criterion(outputs, labels)
-            loss.backward()
-            optimizer.step()
-            scheduler.step()
-            total_loss += loss.item()
+# Training Loop
+model.train()
+for epoch in range(epochs):
+    running_loss = 0.0
+    for inputs, labels in trainloader:
+        inputs, labels = inputs.to(device), labels.to(device)
+        optimizer.zero_grad()
+        outputs = model(inputs)
+        loss = criterion(outputs, labels)
+        loss.backward()
+        optimizer.step()
+        running_loss += loss.item()
 
-        print(f"Epoch [{epoch + 1}/5], Loss: {total_loss / len(train_loader):.4f}")
+    print(f"Epoch [{epoch+1}/{epochs}], Loss: {running_loss/len(trainloader):.4f}")
 
-    torch.save(model.state_dict(), "resnet18_baseline.pth")
-
-train_model()
+# Saving the Baseline Model
+torch.save(model.state_dict(), "models/resnet18_baseline.pth")
+print("Baseline model saved to models/resnet18_baseline.pth")
